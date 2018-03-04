@@ -1,0 +1,66 @@
+#! /bin/bash
+
+set -euo pipefail
+
+OPTIND=1
+
+scriptName=$(basename ${0});
+scriptFolder=$(dirname ${0});
+source ${scriptFolder}/_common.sh;
+push=false;
+
+exec 4>/dev/null;
+
+{
+set +e;
+read -r -d '' usage << EOF
+Usage: ${scriptName} [-v|-h|-p] [<tag-name>]
+
+Flags:
+  -h        Display this usage text
+  -p        Push the built image to a remote registry
+  -v        Make it more verbose
+
+Arguments:
+  tag-name: (Default: 'latest') Docker tag name
+
+Example:
+  # build the 'latest' tag locally
+  ${scriptName}
+  # build the 'v1.0.0' tag locally
+  ${scriptName} v1.0.0
+  # build the 'v1.0.0' tag locally, and push it to a remote regisry
+  ${scriptName} -p v1.0.0
+EOF
+set -e;
+};
+
+
+while getopts "h?v?p" option; do
+  case "${option}" in
+    "h")
+      echo "${usage}";
+      exit 0
+      ;;
+    "p")
+      push=true;
+      ;;
+    "v")
+      exec 4>&1;
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+tagName=${1:-"latest"};
+
+echo "Building image..."
+docker build --tag ${IMAGE_NAME}:${tagName} . >&4;
+echo "Image built!"
+
+if [ ${push} = "true" ]; then
+  echo "Pushing image..."
+  docker push ${IMAGE_NAME} >&4;
+  echo "Image pushed!"
+fi

@@ -1,0 +1,16 @@
+#! /bin/bash
+
+set -euo pipefail
+
+scriptFolder=$(dirname ${0});
+rootFolder=$(dirname ${scriptFolder});
+srcFolder=$(cd ${rootFolder}/src; pwd);
+
+source ${scriptFolder}/_common.sh
+
+${scriptFolder}/build
+echo "Starting shell..."
+docker-compose run \
+  --volume=${srcFolder}:/var/local/frost_notification \
+  main \
+  bash

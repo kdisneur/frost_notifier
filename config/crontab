@@ -1,0 +1,2 @@
+0,30 18-23 * * * (cd /var/local/frost_notification && racket main.rkt 2>1 >> /var/log/frost_notification.log)
+# Don't remove the empty line at the end of this file. It is required to run the cron job

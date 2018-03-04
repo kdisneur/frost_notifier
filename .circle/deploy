@@ -1,0 +1,21 @@
+#! /bin/bash
+
+set -euo pipefail
+
+circleFolder=$(dirname ${0});
+rootFolder=$(dirname ${circleFolder});
+scriptFolder=${rootFolder}/bin;
+dockerMachineName="petprojects";
+remoteDeployScriptPath=deploy-scripts/frost_notification;
+tag=$(cat ${rootFolder}/VERSION.txt);
+secret=${1};
+
+${scriptFolder}/build -p ${tag};
+
+docker-machine scp \
+  ${circleFolder}/_deploy-script \
+  ${dockerMachineName}:${remoteDeployScriptPath};
+
+docker-machine ssh \
+  ${dockerMachineName} \
+  ${remoteDeployScriptPath} ${tag} ${secret};
