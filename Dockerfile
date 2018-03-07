@@ -1,5 +1,10 @@
 FROM jackfirth/racket:6.12
 
+ENV TIMEZONE=Europe/Paris
+
+RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && echo ${TIMEZONE} > /etc/timezone
+
 RUN apt-get update \
     && apt-get install --yes cron
 
