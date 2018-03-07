@@ -31,7 +31,7 @@
                                  [temperature (hash-ref main 'temp)]
                                  [humidity (hash-ref main 'humidity)])
                             (cond [(< temperature 0) #t]
-                                  [(and (< temperature 4) (>= humidity 80)) #t]
+                                  [(and (< temperature 2) (>= humidity 80)) #t]
                                   [else #f])))]
          [bad-forecast-only (filter bad-forecast? tonight-forecast)])
     (not (empty? bad-forecast-only))))
