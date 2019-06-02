@@ -1,9 +1,0 @@
-version: "3.1"
-services:
-  main:
-    image: kdisneur/frost_notification:latest
-    secrets:
-      - frost_notification
-secrets:
-  frost_notification:
-    file: ./secrets/frost_notification.rkt
