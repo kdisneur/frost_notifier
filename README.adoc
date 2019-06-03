@@ -1,0 +1,65 @@
+= Frost Notification
+
+It sends a notification when there are risk on frost. It's useful to know when I need to cover my car at night.
+
+It's a cron running every 30 minutes from 7pm to 10pm every day, and send an SMS if there are a risk.
+
+== Configuration
+
+.Environment Variables
+|===
+| Name | Description
+
+| FROST_NOTIFICATION_CITY
+| Name of the city where the weather need to be checked (e.g. paris, london)
+
+| FROST_NOTIFICATION_COUNTRY
+| Name of the country as a two character code (e.g. fr, uk)
+
+| FROST_NOTIFICATION_PHONE_NUMBER
+| Recipient phone number the notification needs to be sent to
+
+| FROST_NOTIFICATION_TABLE_NAME
+| Name of the DynamoDB used as a storage
+
+| OPENWEATHER_API_KEY
+| https://openweathermap.org[Open Weather] API Key
+
+| TWILIO_ACCESS_TOKEN
+| https://www.twilio.com[Twilio] Access Token
+
+| TWILIO_ACCOUND_SID
+| https://www.twilio.com[Twilio] account sid
+
+| TWILIO_PHONE_NUMBER
+| https://www.twilio.com[Twilio] registered phone number
+|===
+
+== Test
+
+Start dependency (local dynamo DB)
+
+----
+docker-compose up
+yarn setup
+----
+
+Run unit test
+
+----
+yarn test
+----
+
+Manual test
+
+----
+yarn start
+----
+
+== Deployment
+
+Deploy to AWS lambda
+
+----
+yarn deploy
+----

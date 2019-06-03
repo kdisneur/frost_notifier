@@ -1,0 +1,13 @@
+{
+  "TableName": "frost-notification",
+  "KeySchema": [
+    { "AttributeName": "SendingDate", "KeyType": "HASH" }
+  ],
+  "AttributeDefinitions": [
+    { "AttributeName": "SendingDate", "AttributeType": "S" }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  }
+}

@@ -1,0 +1,45 @@
+service:
+  name: frost-notification
+
+plugins:
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+app: frost_notification
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: prod
+  region: eu-west-3
+  profile: ${env:AWS_DEFAULT_PROFILE, default}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - "Fn::GetAtt": [ frostNotificationTable, Arn ]
+
+functions:
+  frost-notification:
+    handler: build/index.frostNotification
+    environment:
+      FROST_NOTIFICATION_CITY: ${env:FROST_NOTIFICATION_CITY}
+      FROST_NOTIFICATION_COUNTRY: ${env:FROST_NOTIFICATION_COUNTRY}
+      FROST_NOTIFICATION_LOGGER: ${env:FROST_NOTIFICATION_LOGGER}
+      FROST_NOTIFICATION_PHONE_NUMBER: ${env:FROST_NOTIFICATION_PHONE_NUMBER}
+      FROST_NOTIFICATION_TABLE_NAME: ${env:FROST_NOTIFICATION_TABLE_NAME}
+      OPENWEATHER_API_KEY: ${env:OPENWEATHER_API_KEY}
+      TWILIO_ACCESS_TOKEN: ${env:TWILIO_ACCESS_TOKEN}
+      TWILIO_ACCOUND_SID: ${env:TWILIO_ACCOUND_SID}
+      TWILIO_PHONE_NUMBER: ${env:TWILIO_PHONE_NUMBER}
+    events:
+        #         cron(Minutes Hours Day-of-month Month Day-of-week Year)
+      - schedule: cron(0/30 18-21 * * ? *)
+
+resources:
+  Resources:
+    frostNotificationTable:
+      Type: AWS::DynamoDB::Table
+      Properties: ${file(dynamodb/frost-notification.json)}

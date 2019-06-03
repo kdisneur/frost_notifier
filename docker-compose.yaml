@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  dynamodb:
+    image: amazon/dynamodb-local:1.11.477
+    environment:
+      DYNAMO_ACCESS_KEY: dyanmo-access-key
+      DYNAMO_SECRET_KEY: dyanmo-secret-key
+    ports:
+      - 8000:8000
+    command:
+      - -jar
+      - DynamoDBLocal.jar
+      - -sharedDb
