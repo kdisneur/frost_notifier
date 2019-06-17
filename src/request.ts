@@ -18,8 +18,7 @@ export interface IPoster {
   post: (options: IOptions) => Promise<IResponse>
 }
 
-export interface IRequester extends IGetter, IPoster {
-}
+export interface IRequester extends IGetter, IPoster { }
 
 export type IResponse = string
 

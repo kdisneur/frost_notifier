@@ -1,6 +1,6 @@
+import fs from 'fs'
 import request, { IOptions, IResponse } from './request'
 import twilio, { IConfig } from './twilio'
-import fs from 'fs'
 
 it('sends a message using twilio', () => {
   const config: IConfig = {

@@ -1,8 +1,8 @@
 = Frost Notification
 
-It sends a notification when there are risk on frost. It's useful to know when I need to cover my car at night.
+It sends a notification when there are risk of frost. It's useful to know when I need to cover my car at night.
 
-It's a cron running every 30 minutes from 7pm to 10pm every day, and send an SMS if there are a risk.
+It's a cron running every 30 minutes from 7pm to 10pm every day, and it sends a text message whenever there are a risk of frost.
 
 == Configuration
 

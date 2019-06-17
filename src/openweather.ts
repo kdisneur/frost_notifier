@@ -1,5 +1,5 @@
-import request, { IGetter } from './request'
 import { ILogger } from './logger'
+import request, { IGetter } from './request'
 
 export interface IConfig {
   apiKey: string
@@ -64,4 +64,5 @@ const probeFromAPI = (rawProbe: IOpenweatherProbeAPI): IProbe => {
 }
 
 const openweather: IOpenweather = { forecast }
+
 export default openweather

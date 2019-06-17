@@ -7,16 +7,12 @@ export interface IConfig {
   logger: ILogger
 }
 
-const dynamoDB = new DynamoDB.DocumentClient()
-
 interface IDatabase {
   hasItem: (config: IConfig, timestamp: Date) => Promise<boolean>
   putItem: (config: IConfig, timestamp: Date, value: boolean) => Promise<void>
 }
 
-const toSendingDate = (date: Date): string => {
-  return date.toISOString().substring(0,10)
-}
+const dynamoDB = new DynamoDB.DocumentClient()
 
 const hasItem = (config: IConfig, date: Date): Promise<boolean> => {
   const params = {
@@ -52,6 +48,10 @@ const putItem = (config: IConfig, date: Date, done: boolean): Promise<void> => {
       return resolve()
     })
   })
+}
+
+const toSendingDate = (date: Date): string => {
+  return date.toISOString().substring(0,10)
 }
 
 const database: IDatabase = { hasItem, putItem }

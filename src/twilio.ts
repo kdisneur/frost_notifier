@@ -1,5 +1,5 @@
-import request, { IPoster } from './request'
 import { ILogger } from './logger'
+import request, { IPoster } from './request'
 
 export interface IConfig {
   accoundSID: string
