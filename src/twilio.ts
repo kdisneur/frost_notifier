@@ -1,22 +1,30 @@
-import { ILogger } from './logger'
-import request, { IPoster } from './request'
+import * as logger from "./logger";
+import * as request from "./request";
 
-export interface IConfig {
-  accoundSID: string
-  accessToken: string
-  phoneNumber: string
-  requester?: IPoster
-  logger: ILogger
+export interface Config {
+  accoundSID: string;
+  accessToken: string;
+  phoneNumber: string;
+  requester?: request.Poster;
+  logger: logger.Logger;
 }
 
-export interface ITwilio {
-  sendMessage: (config: IConfig, recipientPhoneNumber: string, message: string) => Promise<void>
+export interface Twilio {
+  sendMessage: (
+    config: Config,
+    recipientPhoneNumber: string,
+    message: string
+  ) => Promise<void>;
 }
 
-const sendMessage = (config: IConfig, recipientPhoneNumber: string, message: string): Promise<void> => {
-  const requester = config.requester ? config.requester : request
+export const sendMessage = (
+  config: Config,
+  recipientPhoneNumber: string,
+  message: string
+): Promise<void> => {
+  const requester = config.requester ? config.requester : request;
 
-  config.logger.debug('start posting on twilio')
+  config.logger.debug("start posting on twilio");
 
   return requester
     .post({
@@ -33,12 +41,9 @@ const sendMessage = (config: IConfig, recipientPhoneNumber: string, message: str
     })
     .then(body => JSON.parse(body))
     .then(response => {
-      config.logger.debug('response received from twilio')
+      config.logger.debug("response received from twilio");
 
-      return response
+      return response;
     })
-    .then(() => { return })
-}
-
-const twilio: ITwilio = { sendMessage }
-export default twilio
+    .then(() => {});
+};

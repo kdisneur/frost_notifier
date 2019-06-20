@@ -1,34 +1,31 @@
-import request from 'request-promise-native'
+import request from "request-promise-native";
 
-export interface IOptions {
+export interface Options {
   auth?: {
-    user: string
-    pass: string
-  },
-  formData?: any
-  qs?: any
-  uri: string
+    user: string;
+    pass: string;
+  };
+  formData?: object;
+  qs?: object;
+  uri: string;
 }
 
-export interface IGetter {
-  get: (options: IOptions) => Promise<IResponse>
+export interface Getter {
+  get: (options: Options) => Promise<Response>;
 }
 
-export interface IPoster {
-  post: (options: IOptions) => Promise<IResponse>
+export interface Poster {
+  post: (options: Options) => Promise<Response>;
 }
 
-export interface IRequester extends IGetter, IPoster { }
+export interface Requester extends Getter, Poster {}
 
-export type IResponse = string
+export type Response = string;
 
-const requester: IRequester = {
-  get: (options: IOptions): Promise<IResponse> => {
-    return request(options).then(body => body)
-  },
-  post: (options: IOptions): Promise<IResponse> => {
-    return request({ ...options, method: 'POST' }).then(body => body)
-  }
-}
+export const get = (options: Options): Promise<Response> => {
+  return request(options).then(body => body);
+};
 
-export default requester
+export const post = (options: Options): Promise<Response> => {
+  return request({ ...options, method: "POST" }).then(body => body);
+};

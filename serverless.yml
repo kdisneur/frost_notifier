@@ -23,7 +23,7 @@ provider:
 
 functions:
   frost-notification:
-    handler: build/index.frostNotification
+    handler: build/index.triggerNotification
     environment:
       FROST_NOTIFICATION_CITY: ${env:FROST_NOTIFICATION_CITY}
       FROST_NOTIFICATION_COUNTRY: ${env:FROST_NOTIFICATION_COUNTRY}

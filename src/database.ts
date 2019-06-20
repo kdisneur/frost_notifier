@@ -1,59 +1,62 @@
-import { DynamoDB } from 'aws-sdk'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { ILogger } from './logger'
+import { DynamoDB } from "aws-sdk";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import * as logger from "./logger";
 
-export interface IConfig {
-  tableName: string
-  logger: ILogger
+export interface Config {
+  tableName: string;
+  logger: logger.Logger;
 }
 
-interface IDatabase {
-  hasItem: (config: IConfig, timestamp: Date) => Promise<boolean>
-  putItem: (config: IConfig, timestamp: Date, value: boolean) => Promise<void>
+interface Database {
+  hasItem: (config: Config, timestamp: Date) => Promise<boolean>;
+  putItem: (config: Config, timestamp: Date, value: boolean) => Promise<void>;
 }
 
-const dynamoDB = new DynamoDB.DocumentClient()
+const dynamoDB = new DynamoDB.DocumentClient();
 
-const hasItem = (config: IConfig, date: Date): Promise<boolean> => {
+const toSendingDate = (date: Date): string => {
+  return date.toISOString().substring(0, 10);
+};
+
+export const hasItem = (config: Config, date: Date): Promise<boolean> => {
   const params = {
     TableName: config.tableName,
-    Key: { 'SendingDate': toSendingDate(date) }
-  }
+    Key: { SendingDate: toSendingDate(date) }
+  };
 
-  return new Promise((resolve, reject) => {
-    dynamoDB.get(params, (error: Error, value: DocumentClient.GetItemOutput) => {
-      if (error) {
-        config.logger.error(`dynamodb query failed: ${error}`)
-        return resolve(false)
+  return new Promise(resolve => {
+    dynamoDB.get(
+      params,
+      (error: Error, value: DocumentClient.GetItemOutput) => {
+        if (error) {
+          config.logger.error(`dynamodb query failed: ${error}`);
+          return resolve(false);
+        }
+
+        return resolve(value.Item && value.Item["Done"]);
       }
+    );
+  });
+};
 
-      return resolve(value.Item && value.Item['Done'])
-    })
-  })
-}
-
-const putItem = (config: IConfig, date: Date, done: boolean): Promise<void> => {
+export const putItem = (
+  config: Config,
+  date: Date,
+  done: boolean
+): Promise<void> => {
   const params = {
     TableName: config.tableName,
     Item: { SendingDate: toSendingDate(date), Done: done }
-  }
+  };
 
   return new Promise((resolve, reject) => {
-    dynamoDB.put(params, (error: Error, result): void => {
+    dynamoDB.put(params, (error: Error): void => {
       if (error) {
-        config.logger.error(`dynamodb command failed: ${error}`)
-        return reject(error)
+        config.logger.error(`dynamodb command failed: ${error}`);
+        return reject(error);
       }
 
-      return resolve()
-    })
-  })
-}
-
-const toSendingDate = (date: Date): string => {
-  return date.toISOString().substring(0,10)
-}
-
-const database: IDatabase = { hasItem, putItem }
-
-export default database
+      return resolve();
+    });
+  });
+};
