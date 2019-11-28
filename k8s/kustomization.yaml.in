@@ -1,0 +1,28 @@
+namespace: prod
+
+resources:
+  - pvc.yaml
+  - job.yaml
+
+commonLabels:
+  app: frost-notifier
+
+configMapGenerator:
+  - name: frost-notifier-configuration
+    literals:
+      - COUNTRY="<COUNTRY>"
+      - LANGUAGE="<LANGUAGE>"
+      - PHONE="<PHONE>"
+      - POSTCODE="<POSTCODE>"
+
+images:
+  - name: kdisneur/frost-notifier
+    newTag: <IMAGE_TAG>
+
+secretGenerator:
+  - name: frost-notifier-credentials
+    literals:
+      - OPENWEATHER_APIKEY="<OPENWEATHER_APIKEY>"
+      - TWILIO_ACCOUNTSID="<TWILIO_ACCOUNTSID>"
+      - TWILIO_TOKEN="<TWILIO_TOKEN>"
+      - TWILIO_VIRTUALPHONENUMBER="<TWILIO_VIRTUALPHONENUMBER>"

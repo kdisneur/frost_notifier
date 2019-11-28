@@ -1,0 +1,36 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: frost-notifier
+spec:
+  schedule: "0,30 17-22 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          initContainers:
+            # HACK: Kubernetes DO is not able  to set the correct rights for non-root users
+            # https://www.digitalocean.com/docs/kubernetes/how-to/add-volumes/
+            - name: caching-data-permission-fix
+              image: busybox
+              command: ["/bin/chmod","-R","777", "/data"]
+              volumeMounts:
+              - name: frost-notifier-caching
+                mountPath: /data
+          containers:
+            - name: frost-notifier
+              image: kdisneur/frost-notifier:master-latest
+              envFrom:
+                - configMapRef:
+                    name: frost-notifier-configuration
+                - secretRef:
+                    name: frost-notifier-credentials
+              volumeMounts:
+                - name: frost-notifier-caching
+                  mountPath: /usr/local/var/frost-notifier/caching
+          restartPolicy: OnFailure
+          volumes:
+            - name: frost-notifier-caching
+              persistentVolumeClaim:
+                claimName: frost-notifier-pvc

@@ -1,0 +1,95 @@
+= Frost Notifier
+
+It sends a notification when there are risk of frost. It's useful to know when I need to cover my car at night.
+
+It's a cron running every 30 minutes from 6pm to 10pm every day, and it sends a text message whenever there are a risk of frost.
+
+== Usage
+
+----
+Usage: frost-notifier [options] countrycode zipcode recipient
+
+Description
+
+  The frost-notifier command line fetches the weather forecast for a night and
+  sends a text message if there are risks of frost.
+
+  If the current hour is between 7pm-8am we look for the current "night" (the
+  current 7pm-8am time range), if the current hour is after 8am, we look for
+  the next "night" (the next 7pm-8am time range).
+
+  The command line keeps a local cache folder storing the last text-message
+  sent in order to not resend the text message several times for the same night.
+
+Arguments
+
+  init
+    override the default command. it's used to initialize the credentials.json
+	file based on user input
+  countrycode
+	iso country code (e.g. "fr", "be", ...)
+  zipcode
+	locale zip code (e.g. "59000")
+  recipient
+	contact information (e.g. +33601010101)
+
+Options
+
+  -f string
+    	path to the JSON credentials file (default "credentials.json")
+  -l string
+    	language used to send the notifications (default "en")
+  -v	enable debug mode
+----
+
+== Configuration
+
+=== Development
+
+Run the command: `go run ./main.go init`.
+The script will ask for some confidential information and will store them in a local `credentials.json` file.
+
+=== Production
+
+Export the following environment variables
+
+|===
+| Name | Description
+
+| LANGUAGE
+| Language used to send the SMS. Supported: (`fr`: French, `en`: English)
+
+| COUNTRY
+| Country where the user lives
+
+| POSTCODE
+| City postcode where the user lives
+
+| PHONE
+| Phone number of the user
+
+| OPENWEATHER_APIKEY
+| https://openweathermap.org[Open Weather] API Key
+
+| TWILIO_ACCOUND_SID
+| https://www.twilio.com[Twilio] account sid
+
+| TWILIO_ACCESS_TOKEN
+| https://www.twilio.com[Twilio] Access Token
+
+| TWILIO_PHONE_NUMBER
+| https://www.twilio.com[Twilio] registered phone number
+|===
+
+== Test
+
+----
+go test ./...
+----
+
+== Deployment
+
+----
+make build-image
+make deploy
+----

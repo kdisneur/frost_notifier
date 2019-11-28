@@ -1,0 +1,38 @@
+FROM golang:<GO_VERSION> as build
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 go build -o frost-notifier
+
+FROM alpine:3.10.2
+
+RUN addgroup -S notifier && adduser -S notifier -G notifier
+
+RUN apk add --no-cache bash curl
+
+WORKDIR /app
+
+COPY --from=build /app/frost-notifier .
+COPY bin .
+
+RUN chown -R notifier:notifier .
+
+USER notifier
+
+ARG GIT_REPOSITORY=
+ARG GIT_SHA=
+ARG CREATED_AT=
+
+LABEL org.opencontainers.image.created="$CREATED_AT" \
+      org.opencontainers.image.source="$GIT_REPOSITORY" \
+      org.opencontainers.image.revision="$GIT_SHA" \
+      org.opencontainers.image.title="Frost Notifier" \
+      org.opencontainers.image.description="The frost-notifier command line fetches the weather forecast for a night and sends a text message if there are risks of frost."
+
+CMD ["./entrypoint.sh"]
