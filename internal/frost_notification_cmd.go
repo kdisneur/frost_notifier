@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func Main(ctx context.Context, config *Config) error {
+func FrostNotificationCmd(ctx context.Context, config *Config) error {
 	translator := config.Translations()
 
 	frostNotifier := &FrostNotifier{

@@ -8,18 +8,20 @@ import (
 	"os"
 )
 
+type Command func(context.Context, *internal.Config) error
+
 func main() {
 	var config internal.Config
-	parseFlagsAndArguments(&config)
+	command := parseFlagsAndArguments(&config)
 
 	ctx := context.Background()
 
-	if err := internal.Main(ctx, &config); err != nil {
+	if err := command(ctx, &config); err != nil {
 		fail(err.Error())
 	}
 }
 
-func parseFlagsAndArguments(c *internal.Config) {
+func parseFlagsAndArguments(c *internal.Config) Command {
 	flag.Usage = func() {
 		usage := `Usage: %s [options] countrycode zipcode recipient
 
@@ -60,11 +62,9 @@ Options
 	flag.Parse()
 
 	if flag.Arg(0) == "init" {
-		if err := internal.InitializeCredentialsCmd(c.ConfigFile); err != nil {
-			fail(err.Error())
+		return func(ctx context.Context, config *internal.Config) error {
+			return internal.InitializeCredentialsCmd(config.ConfigFile)
 		}
-
-		os.Exit(0)
 	}
 
 	if err := c.Load(); err != nil {
@@ -78,6 +78,8 @@ Options
 	c.CountryCode = flag.Arg(0)
 	c.ZipCode = flag.Arg(1)
 	c.Recipient = flag.Arg(2)
+
+	return internal.FrostNotificationCmd
 }
 
 func fail(message string) {

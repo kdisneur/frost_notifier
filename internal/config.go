@@ -9,26 +9,28 @@ import (
 	"io/ioutil"
 )
 
+type CredentialsConfig struct {
+	LocalCache struct {
+		Path string `json:"path"`
+	} `json:"localcache"`
+	OpenWeather struct {
+		APIKey string `json:"api_key"`
+	} `json:"openweather"`
+	Twilio struct {
+		AccoundSID string `json:"account_sid"`
+		Token      string `json:"token"`
+		Sender     string `json:"virual_phone_number"`
+	} `json:"twilio"`
+}
+
 type Config struct {
 	ConfigFile  string
 	CountryCode string
 	Debug       bool
 	ZipCode     string
 	Language    string
-	Credentials struct {
-		LocalCache struct {
-			Path string `json:"path"`
-		} `json:"localcache"`
-		OpenWeather struct {
-			APIKey string `json:"api_key"`
-		} `json:"openweather"`
-		Twilio struct {
-			AccoundSID string `json:"account_sid"`
-			Token      string `json:"token"`
-			Sender     string `json:"virual_phone_number"`
-		} `json:"twilio"`
-	}
-	Recipient string
+	Credentials CredentialsConfig
+	Recipient   string
 }
 
 func (c *Config) NewLocalCache() *localcache.LocalCache {
